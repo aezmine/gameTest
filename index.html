@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Quantum Orbit - Cosmic Dodge</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Quantum Orbit - An interactive, fast-paced cosmic avoidance game. Orbit the star, dodge asteroids, and collect cosmic energy. Optimized for mobile and desktop.">
+    <meta name="theme-color" content="#0a0813">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <!-- Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Mobile App Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Main HUD (Heads-Up Display) -->
+        <div id="hud" class="ui-layer hidden">
+            <div class="hud-top">
+                <div class="hud-score-container">
+                    <span class="label">SCORE</span>
+                    <span id="hud-score" class="value">0000</span>
+                </div>
+                <div class="hud-multiplier-container">
+                    <span id="hud-multiplier" class="multiplier-badge">1x</span>
+                    <div class="combo-progress-bar">
+                        <div id="hud-combo-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="hud-power-container">
+                    <span class="label">SUPERNOVA</span>
+                    <div class="power-bar">
+                        <div id="hud-power-fill" class="progress-fill power"></div>
+                    </div>
+                </div>
+            </div>
+            <button id="btn-pause" class="icon-button" aria-label="Pause Game">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Screens Overlay Container -->
+        <div id="overlay-container" class="ui-layer">
+            
+            <!-- Main Menu Screen -->
+            <div id="screen-main-menu" class="menu-screen active">
+                <div class="title-container">
+                    <h1 class="game-title">QUANTUM<br><span class="highlight">ORBIT</span></h1>
+                    <p class="game-subtitle">COSMIC DODGE</p>
+                </div>
+                
+                <div class="menu-actions">
+                    <button id="btn-play" class="btn btn-primary btn-glow">LAUNCH MISSION</button>
+                    
+                    <div class="settings-row">
+                        <button id="btn-toggle-sfx" class="btn btn-secondary">
+                            <span class="icon">🔊</span> SFX: ON
+                        </button>
+                        <button id="btn-toggle-music" class="btn btn-secondary">
+                            <span class="icon">🎵</span> MUSIC: ON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instructions-card">
+                    <h3>HOW TO PLAY</h3>
+                    <ul>
+                        <li><span class="control-key">TAP & HOLD</span> to shrink orbit radius.</li>
+                        <li><span class="control-key">RELEASE</span> to expand orbit radius.</li>
+                        <li>Dodge the <span class="danger-text">CRIMSON ASTEROIDS</span>.</li>
+                        <li>Collect <span class="spark-text">GOLDEN SPARKS</span> for score and combo energy.</li>
+                        <li>Fill the bar to trigger <span class="supernova-text">SUPERNOVA INVINCIBILITY</span>!</li>
+                    </ul>
+                </div>
+
+                <div id="high-score-display" class="high-score-card">
+                    <span class="label">PERSONAL BEST:</span>
+                    <span id="menu-high-score" class="value">0000</span>
+                </div>
+            </div>
+
+            <!-- Pause Screen -->
+            <div id="screen-pause" class="menu-screen hidden">
+                <h2 class="screen-title">SYSTEM PAUSED</h2>
+                <p class="screen-desc">Orbital stabilizers locked in place.</p>
+                
+                <div class="menu-actions vertical">
+                    <button id="btn-resume" class="btn btn-primary">RESUME FLIGHT</button>
+                    <button id="btn-restart-paused" class="btn btn-secondary">RESTART MISSION</button>
+                    <button id="btn-quit-paused" class="btn btn-danger">ABANDON TO MAIN MENU</button>
+                </div>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div id="screen-game-over" class="menu-screen hidden">
+                <div class="game-over-header">
+                    <h2 class="danger-title">SHUTDOWN</h2>
+                    <p class="danger-subtitle">STABILIZERS COMPROMISED</p>
+                </div>
+                
+                <div class="stats-recap">
+                    <div class="stat-box">
+                        <span class="label">FINAL SCORE</span>
+                        <span id="final-score" class="value score-val">0000</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>MAX COMBO</span>
+                        <span id="max-combo" class="stat-val">1x</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>SPARKS COLLECTED</span>
+                        <span id="sparks-collected" class="stat-val">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>SURVIVED TIME</span>
+                        <span id="time-survived" class="stat-val">0.0s</span>
+                    </div>
+                </div>
+
+                <div id="new-high-score-banner" class="high-score-banner hidden">
+                    🎉 NEW SYSTEM RECORD! 🎉
+                </div>
+
+                <div class="menu-actions vertical">
+                    <button id="btn-retry" class="btn btn-primary btn-glow">RELAUNCH MISSION</button>
+                    <button id="btn-quit" class="btn btn-secondary">RETURN TO DECK</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Script File -->
+    <script src="game.js"></script>
+</body>
+</html>
